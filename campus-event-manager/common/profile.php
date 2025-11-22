@@ -1,0 +1,521 @@
+<?php
+session_start();
+require_once '../config/database.php';
+
+// Check if user is logged in
+if(!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$error = "";
+$success = "";
+
+// Handle profile update
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
+    $full_name = mysqli_real_escape_string($conn, trim($_POST['full_name']));
+    $email = mysqli_real_escape_string($conn, trim($_POST['email']));
+    $phone = mysqli_real_escape_string($conn, trim($_POST['phone']));
+    $bio = mysqli_real_escape_string($conn, trim($_POST['bio']));
+    
+    // Role-specific fields
+    $department = isset($_POST['department']) ? mysqli_real_escape_string($conn, $_POST['department']) : null;
+    $year = isset($_POST['year']) ? mysqli_real_escape_string($conn, $_POST['year']) : null;
+    
+    // Validation
+    if(empty($full_name) || empty($email)) {
+        $error = "Name and Email are required!";
+    } else {
+        // Check if email is already taken by another user
+        $check_email = "SELECT id FROM users WHERE email = '$email' AND id != $user_id";
+        if(mysqli_num_rows(mysqli_query($conn, $check_email)) > 0) {
+            $error = "Email already exists!";
+        } else {
+            // Build update query based on role
+            if($_SESSION['role'] == 'admin') {
+                // Admin can edit: name, email, phone, bio, department
+                $update_query = "UPDATE users SET 
+                               full_name = '$full_name',
+                               email = '$email',
+                               phone = '$phone',
+                               bio = '$bio',
+                               department = '$department'
+                               WHERE id = $user_id";
+            } elseif($_SESSION['role'] == 'organizer') {
+                // Organizer can edit: name, email, phone, bio, department
+                $update_query = "UPDATE users SET 
+                               full_name = '$full_name',
+                               email = '$email',
+                               phone = '$phone',
+                               bio = '$bio',
+                               department = '$department'
+                               WHERE id = $user_id";
+            } else {
+                // Student can edit: name, email, phone, bio, year, department
+                $update_query = "UPDATE users SET 
+                               full_name = '$full_name',
+                               email = '$email',
+                               phone = '$phone',
+                               bio = '$bio',
+                               year = '$year',
+                               department = '$department'
+                               WHERE id = $user_id";
+            }
+            
+            if(mysqli_query($conn, $update_query)) {
+                $success = "Profile updated successfully!";
+                $_SESSION['user_name'] = $full_name; // Update session
+            } else {
+                $error = "Error updating profile!";
+            }
+        }
+    }
+}
+
+// Handle profile image upload
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['upload_image'])) {
+    if(isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        $filename = $_FILES['profile_image']['name'];
+        $filetype = pathinfo($filename, PATHINFO_EXTENSION);
+        
+        if(in_array(strtolower($filetype), $allowed)) {
+            $newfilename = 'profile_' . $user_id . '_' . time() . '.' . $filetype;
+            $upload_path = '../uploads/profiles/';
+            
+            // Create directory if not exists
+            if(!is_dir($upload_path)) {
+                mkdir($upload_path, 0777, true);
+            }
+            
+            if(move_uploaded_file($_FILES['profile_image']['tmp_name'], $upload_path . $newfilename)) {
+                // Delete old profile image if exists
+                $old_image_query = "SELECT profile_image FROM users WHERE id = $user_id";
+                $old_image_result = mysqli_query($conn, $old_image_query);
+                $old_image = mysqli_fetch_assoc($old_image_result)['profile_image'];
+                
+                if($old_image && file_exists($upload_path . $old_image)) {
+                    unlink($upload_path . $old_image);
+                }
+                
+                // Update database
+                $update_image = "UPDATE users SET profile_image = '$newfilename' WHERE id = $user_id";
+                if(mysqli_query($conn, $update_image)) {
+                    $success = "Profile image updated successfully!";
+                }
+            } else {
+                $error = "Failed to upload image!";
+            }
+        } else {
+            $error = "Invalid file type. Only JPG, JPEG, PNG & GIF allowed!";
+        }
+    } else {
+        $error = "Please select an image!";
+    }
+}
+
+// Fetch user data
+$user_query = "SELECT * FROM users WHERE id = $user_id";
+$user_result = mysqli_query($conn, $user_query);
+$user = mysqli_fetch_assoc($user_result);
+
+// Get user statistics
+if($user['role'] == 'student') {
+    $registrations_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM registrations WHERE user_id = $user_id"))['count'];
+    $saved_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM event_saves WHERE user_id = $user_id"))['count'];
+    $liked_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM event_likes WHERE user_id = $user_id"))['count'];
+} elseif($user['role'] == 'organizer') {
+    $events_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM events WHERE organizer_id = $user_id"))['count'];
+    $total_registrations = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM registrations r JOIN events e ON r.event_id = e.id WHERE e.organizer_id = $user_id"))['count'];
+    $merch_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM merchandise WHERE organizer_id = $user_id"))['count'];
+} elseif($user['role'] == 'admin') {
+    $total_users = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM users"))['count'];
+    $total_events = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM events"))['count'];
+    $pending_approvals = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM events WHERE status = 'pending'"))['count'];
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Campus Event Manager</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .profile-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .profile-sidebar {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+            align-self: start;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .profile-image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #e2e8f0;
+        }
+        
+        .profile-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            font-weight: 700;
+            border: 5px solid #e2e8f0;
+        }
+        
+        .upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #667eea;
+            color: white;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .stat-box {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .profile-main {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        
+        .info-box {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 968px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <?php include '../includes/sidebar.php'; ?>
+        
+        <main class="main-content">
+            <?php include '../includes/header.php'; ?>
+            
+            <div class="content-header">
+                <h1>👤 My Profile</h1>
+                <a href="../common/home.php" class="btn btn-secondary">← Back to Home</a>
+            </div>
+            
+            <?php if($error): ?>
+                <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+            
+            <?php if($success): ?>
+                <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+            <?php endif; ?>
+            
+            <div class="profile-container">
+                <!-- Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="profile-image-container">
+                        <?php if($user['profile_image']): ?>
+                            <img src="../uploads/profiles/<?php echo htmlspecialchars($user['profile_image']); ?>" 
+                                 alt="Profile" class="profile-image">
+                        <?php else: ?>
+                            <div class="profile-placeholder">
+                                <?php echo strtoupper(substr($user['full_name'], 0, 2)); ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <form method="POST" enctype="multipart/form-data" id="imageUploadForm">
+                            <input type="file" name="profile_image" id="profileImageInput" accept="image/*" style="display: none;">
+                            <label for="profileImageInput" class="upload-btn">📷</label>
+                            <button type="submit" name="upload_image" id="uploadBtn" style="display: none;"></button>
+                        </form>
+                    </div>
+                    
+                    <h2 style="margin-bottom: 5px; color: #2d3748;"><?php echo htmlspecialchars($user['full_name']); ?></h2>
+                    <p style="color: #718096; margin-bottom: 10px;">@<?php echo htmlspecialchars($user['username']); ?></p>
+                    
+                    <span class="role-badge role-<?php echo $user['role']; ?>" style="font-size: 14px;">
+                        <?php echo ucfirst($user['role']); ?>
+                    </span>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px; text-align: left;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span>📧</span>
+                            <span style="font-size: 14px; color: #4a5568;"><?php echo htmlspecialchars($user['email']); ?></span>
+                        </div>
+                        <?php if($user['phone']): ?>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span>📱</span>
+                            <span style="font-size: 14px; color: #4a5568;"><?php echo htmlspecialchars($user['phone']); ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span>🏢</span>
+                            <span style="font-size: 14px; color: #4a5568;"><?php echo htmlspecialchars($user['department']); ?></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Statistics -->
+                    <?php if($user['role'] == 'student'): ?>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $registrations_count; ?></div>
+                            <div class="stat-label">Events</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $saved_count; ?></div>
+                            <div class="stat-label">Saved</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $liked_count; ?></div>
+                            <div class="stat-label">Liked</div>
+                        </div>
+                    </div>
+                    <?php elseif($user['role'] == 'organizer'): ?>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $events_count; ?></div>
+                            <div class="stat-label">Events</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $total_registrations; ?></div>
+                            <div class="stat-label">Registrations</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $merch_count; ?></div>
+                            <div class="stat-label">Merchandise</div>
+                        </div>
+                    </div>
+                    <?php elseif($user['role'] == 'admin'): ?>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $total_users; ?></div>
+                            <div class="stat-label">Users</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $total_events; ?></div>
+                            <div class="stat-label">Events</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number"><?php echo $pending_approvals; ?></div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="profile-main">
+                    <form method="POST" action="">
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <h3 style="margin-bottom: 20px; color: #2d3748;">📝 Personal Information</h3>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group">
+                                    <label>Full Name *</label>
+                                    <input type="text" name="full_name" required 
+                                           value="<?php echo htmlspecialchars($user['full_name']); ?>">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <input type="email" name="email" required 
+                                           value="<?php echo htmlspecialchars($user['email']); ?>">
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="tel" name="phone" 
+                                           value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
+                                </div>
+                                
+                                <!-- Department - Editable for Admin and Organizer -->
+                                <?php if($user['role'] == 'admin' || $user['role'] == 'organizer'): ?>
+                                <div class="form-group">
+                                    <label>Department *</label>
+                                    <input type="text" name="department" required
+                                           value="<?php echo htmlspecialchars($user['department']); ?>">
+                                </div>
+                                <?php endif; ?>
+                                
+                                <!-- Year - Editable for Student -->
+                                <?php if($user['role'] == 'student'): ?>
+                                <div class="form-group">
+                                    <label>Year</label>
+                                    <select name="year">
+                                        <option value="">Select Year</option>
+                                        <option value="First Year" <?php echo $user['year'] == 'First Year' ? 'selected' : ''; ?>>First Year</option>
+                                        <option value="Second Year" <?php echo $user['year'] == 'Second Year' ? 'selected' : ''; ?>>Second Year</option>
+                                        <option value="Third Year" <?php echo $user['year'] == 'Third Year' ? 'selected' : ''; ?>>Third Year</option>
+                                        <option value="Fourth Year" <?php echo $user['year'] == 'Fourth Year' ? 'selected' : ''; ?>>Fourth Year</option>
+                                        <option value="Graduate" <?php echo $user['year'] == 'Graduate' ? 'selected' : ''; ?>>Graduate</option>
+                                    </select>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <!-- Department - Editable for Student -->
+                            <?php if($user['role'] == 'student'): ?>
+                            <div class="form-group">
+                                <label>Department *</label>
+                                <input type="text" name="department" required
+                                       value="<?php echo htmlspecialchars($user['department']); ?>">
+                            </div>
+                            <?php endif; ?>
+                            
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea name="bio" rows="4" placeholder="Tell us about yourself..."><?php echo htmlspecialchars($user['bio'] ?? ''); ?></textarea>
+                            </div>
+                            
+                            <!-- Info box about editable fields -->
+                            <div class="info-box">
+                                <p style="color: #2d3748; margin: 0; font-size: 14px;">
+                                    ℹ️ <strong>Editable Fields:</strong>
+                                    <?php if($user['role'] == 'admin'): ?>
+                                        You can edit your name, email, phone, bio, and department.
+                                    <?php elseif($user['role'] == 'organizer'): ?>
+                                        You can edit your name, email, phone, bio, and department.
+                                    <?php else: ?>
+                                        You can edit your name, email, phone, bio, year, and department.
+                                    <?php endif; ?>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Information (Read-only) -->
+                        <div class="form-section">
+                            <h3 style="margin-bottom: 20px; color: #2d3748;">🔐 Account Information</h3>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input type="text" value="<?php echo htmlspecialchars($user['username']); ?>" disabled>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <input type="text" value="<?php echo ucfirst($user['role']); ?>" disabled>
+                                </div>
+                            </div>
+                            
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 15px;">
+                                <p style="color: #92400e; margin: 0; font-size: 14px;">
+                                    ⚠️ Username and Role cannot be changed. Contact admin if you need to update these fields.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Save Button -->
+                        <div style="display: flex; gap: 15px;">
+                            <button type="submit" name="update_profile" class="btn btn-primary">
+                                ✓ Save Changes
+                            </button>
+                            <a href="../common/home.php" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <?php include '../includes/footer.php'; ?>
+        </main>
+    </div>
+    
+    <script>
+        // Auto-submit form when image is selected
+        document.getElementById('profileImageInput').addEventListener('change', function() {
+            if(this.files && this.files[0]) {
+                document.getElementById('uploadBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
