@@ -552,6 +552,22 @@ $total_saved = mysqli_num_rows($saved_result);
                                             <p style="color: #718096;">
                                                 Registration cancelled on: <?php echo date('M d, Y', strtotime($event['registration_date'])); ?>
                                             </p>
+                                            
+                                            <div class="event-actions">
+                                                <a href="event_detail.php?id=<?php echo $event['event_id']; ?>" 
+                                                   class="btn btn-secondary btn-sm">View Details</a>
+                                                
+                                                <?php 
+                                                $seats_taken_q = "SELECT COUNT(*) as cnt FROM registrations WHERE event_id={$event['event_id']} AND status='registered'";
+                                                $seats_data = mysqli_fetch_assoc(mysqli_query($conn, $seats_taken_q));
+                                                $seats_left_c = $event['max_participants'] - $seats_data['cnt'];
+                                                if($event['event_date'] > date('Y-m-d H:i:s') && $event['status'] == 'upcoming' && $seats_left_c > 0): ?>
+                                                    <a href="register_event.php?event_id=<?php echo $event['event_id']; ?>" 
+                                                       class="btn btn-primary btn-sm">🔄 Register Again</a>
+                                                <?php elseif($seats_left_c <= 0): ?>
+                                                    <button class="btn btn-secondary btn-sm" disabled>Event Full</button>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endwhile; ?>

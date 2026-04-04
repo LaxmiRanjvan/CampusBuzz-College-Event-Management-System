@@ -233,5 +233,6 @@ $recent_users_result = mysqli_query($conn, $recent_users_query);
             </div>
         </main>
     </div>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

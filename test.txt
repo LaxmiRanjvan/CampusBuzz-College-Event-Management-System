@@ -80,3 +80,13 @@ Would you like me to create:
 
 event 
 crtae contact ,registration form link, add merch/ goodies (like how create event is there they will also sell merch/ goodies  it will have multiple photo , price , name , size available , contact,des,quatity, place an order link(not actual payment but place the oreder fo me a google form link as option ,category(t shirt , oversized t shirt , hoodie , cap , tot bag, cup, sweatshirt, mask, diaries, magzin , other etc)) , sixe guit optional , return policy optional distribution date, venue , time  )
+
+
+
+
+problem admin crate user-notification problem 
+
+
+new feature
+-email send for admin and organizer
+-

@@ -156,6 +156,9 @@ $merch_result = mysqli_query($conn, $merch_query);
                                                class="btn btn-sm btn-success" >View</a>
                                             <a href="view_orders.php?merch_id=<?php echo $merch['id']; ?>" 
                                                class="btn btn-sm btn-primary" title="View Orders">📦 Orders</a>
+                                            <a href="send_merch_notification.php?merch_id=<?php echo $merch['id']; ?>" 
+                                               class="btn btn-sm" style="background: #8308ac; color: white;"
+                                               title="Send Promotion">📢 Emails</a>
                                             <a href="?delete=<?php echo $merch['id']; ?>" 
                                                class="btn btn-sm btn-danger" 
                                                onclick="return confirm('Are you sure you want to delete this product?')" 
@@ -184,5 +187,6 @@ $merch_result = mysqli_query($conn, $merch_query);
             }
         }
     </script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

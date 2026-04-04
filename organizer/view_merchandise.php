@@ -306,5 +306,6 @@ $sizes = !empty($merch['sizes_available']) ? explode(',', $merch['sizes_availabl
             });
         });
     </script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

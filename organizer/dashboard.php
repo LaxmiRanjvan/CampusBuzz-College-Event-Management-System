@@ -153,5 +153,6 @@ $my_events_result = mysqli_query($conn, $my_events_query);
             </div>
         </main>
     </div>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

@@ -414,5 +414,6 @@ $user_role = $_SESSION['role'];
             });
         }
     </script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

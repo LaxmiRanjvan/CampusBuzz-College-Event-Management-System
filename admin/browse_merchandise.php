@@ -283,5 +283,6 @@ $categories = ['t-shirt', 'oversized-tshirt', 'hoodie', 'cap', 'tote-bag', 'cup'
             <?php endif; ?>
         </main>
     </div>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

@@ -10,6 +10,8 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'organizer') {
 
 $organizer_id = $_SESSION['user_id'];
 
+require_once '../config/co_organizer_helper.php';
+
 // If specific event_id is provided
 $event_filter = "";
 $selected_event_id = null;
@@ -17,6 +19,12 @@ $selected_event_title = "All Events";
 
 if(isset($_GET['event_id']) && is_numeric($_GET['event_id'])) {
     $selected_event_id = intval($_GET['event_id']);
+    
+    // Check if user can view this event (as owner or co-organizer)
+    if(!canViewEvent($conn, $selected_event_id, $organizer_id)) {
+        header("Location: manage_events.php");
+        exit();
+    }
     
     // Verify event belongs to this organizer
     $verify_query = "SELECT title FROM events WHERE id = $selected_event_id AND organizer_id = $organizer_id";
@@ -211,5 +219,6 @@ $total_registrations = mysqli_num_rows($registrations_result);
             }
         }
     </style>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

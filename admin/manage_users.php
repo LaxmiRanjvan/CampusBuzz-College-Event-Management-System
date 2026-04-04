@@ -294,6 +294,9 @@ $departments_result = mysqli_query($conn, $departments_query);
                                                class="btn btn-sm btn-secondary" title="View Details"> View</a>
                                             <a href="edit_user.php?id=<?php echo $user['id']; ?>" 
                                                class="btn btn-sm btn-primary" title="Edit">✏️ Edit</a>
+                                            <a href="send_email.php?user_id=<?php echo $user['id']; ?>" 
+                                                class="btn btn-sm btn-success" 
+                                                title="Send Credentials">📧 Email</a>
                                             <a href="?delete=<?php echo $user['id']; ?>&<?php echo http_build_query(array_diff_key($_GET, ['delete' => ''])); ?>" 
                                                class="btn btn-sm btn-danger" 
                                                onclick="return confirm('Are you sure you want to delete this user? All their data will be permanently removed!')" 
@@ -320,5 +323,6 @@ $departments_result = mysqli_query($conn, $departments_query);
             <?php endif; ?>
         </main>
     </div>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

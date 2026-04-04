@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
+require_once '../config/co_organizer_helper.php';
 
 // Check if user is logged in and is organizer
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'organizer') {
@@ -56,13 +57,9 @@ if(isset($_GET['status_change']) && is_numeric($_GET['status_change']) && isset(
     }
 }
 
-// Fetch all events by this organizer
-$events_query = "SELECT e.*, 
-                 (SELECT COUNT(*) FROM registrations WHERE event_id = e.id AND status='registered') as registered_count
-                 FROM events e 
-                 WHERE e.organizer_id = $organizer_id 
-                 ORDER BY e.created_at DESC";
-$events_result = mysqli_query($conn, $events_query);
+// Fetch all events manageable by this organizer (owned or co-organized)
+$events = getUserManageableEvents($conn, $organizer_id);
+$events_result = null; // We have array now
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +88,7 @@ $events_result = mysqli_query($conn, $events_query);
                 <div class="alert alert-success"><?php echo $success; ?></div>
             <?php endif; ?>
             
-            <?php if(mysqli_num_rows($events_result) > 0): ?>
+            <?php if(count($events) > 0): ?>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -106,7 +103,7 @@ $events_result = mysqli_query($conn, $events_query);
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($event = mysqli_fetch_assoc($events_result)): ?>
+                            <?php foreach($events as $event): ?>
                                 <tr>
                                     <td>
                                         <?php if($event['image']): ?>
@@ -162,10 +159,19 @@ $events_result = mysqli_query($conn, $events_query);
                                                class="btn btn-sm btn-danger" 
                                                onclick="return confirm('Are you sure you want to delete this event? All registrations will also be deleted!')" 
                                                title="Delete">🗑️ Delete</a>
+                                            <a href="send_notification.php?event_id=<?php echo $event['id']; ?>" 
+                                                class="btn btn-sm" style="background:  #8308ac; color: white;
+                                                title="Send Notification">📧 Email
+                                            </a>
+                                            <a href="send_tickets.php?event_id=<?php echo $event['id']; ?>" 
+                                               class="btn btn-sm" 
+                                               style="background: #38b2ac; color: white;"
+                                               title="Send Tickets">🎫 Tickets
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -186,5 +192,6 @@ $events_result = mysqli_query($conn, $events_query);
             }
         }
     </script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

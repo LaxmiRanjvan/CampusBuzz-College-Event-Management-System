@@ -54,13 +54,33 @@
             <a href="../organizer/view_registrations.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'view_registrations.php' ? 'active' : ''; ?>">
                 <span>👥</span> Registrations
             </a>
-            <!-- NEW: Merchandise Section -->
+             <a href="../organizer/send_notification.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'send_notification.php' ? 'active' : ''; ?>">
+                <span>📧</span> Event Notifications
+            </a>
+
+            
+
              <a href="../organizer/create_merchandise.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'create_merchandise.php' ? 'active' : ''; ?>">
                 <span>🛍️</span> Add Merchandise
             </a>
             <a href="../organizer/manage_merchandise.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'manage_merchandise.php' ? 'active' : ''; ?>">
                 <span>📦</span> Manage Merchandise
             </a>
+             <a href="../organizer/send_merch_notification.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'send_merch_notification.php' ? 'active' : ''; ?>">
+                <span>📧</span> Merchandise Notifications
+            </a>
+            <a href="../organizer/send_ticket.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'send_ticket.php' ? 'active' : ''; ?>">
+                <span>🎫</span> Send Tickets
+            </a>
+            <a href="../organizer/verify_ticket.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'verify_ticket.php' ? 'active' : ''; ?>">
+                <span>🎫</span> Verify Tickets
+            </a>
+            <!-- <a href="../organizer/co_organizer_invitations.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'co_organizer_invitations.php' ? 'active' : ''; ?>">
+                <span>🤝</span> My Invitations
+            </a>
+            <a href="../organizer/manage_co_organizers.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'manage_co_organizers.php' ? 'active' : ''; ?>">
+                <span>🤝</span> Manage Co-Organizers
+            </a> -->
         <?php endif; ?>
         
         <?php if($_SESSION['role'] == 'admin'): ?>

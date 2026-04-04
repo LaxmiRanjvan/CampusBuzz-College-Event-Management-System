@@ -47,7 +47,8 @@ $upcoming_sql = "SELECT e.*, u.full_name as organizer_name,
                (SELECT COUNT(*) FROM registrations WHERE event_id = e.id AND status='registered') as registered_count,
                (SELECT COUNT(*) FROM event_likes WHERE event_id = e.id AND user_id = $user_id) as is_liked,
                (SELECT COUNT(*) FROM event_saves WHERE event_id = e.id AND user_id = $user_id) as is_saved,
-               (SELECT COUNT(*) FROM event_likes WHERE event_id = e.id) as total_likes
+               (SELECT COUNT(*) FROM event_likes WHERE event_id = e.id) as total_likes,
+               (SELECT COUNT(*) FROM event_comments WHERE event_id = e.id) as comment_count
                FROM events e 
                JOIN users u ON e.organizer_id = u.id 
                WHERE e.status = 'upcoming' AND e.event_date > NOW()
@@ -59,7 +60,8 @@ $this_week_sql = "SELECT e.*, u.full_name as organizer_name,
                (SELECT COUNT(*) FROM registrations WHERE event_id = e.id AND status='registered') as registered_count,
                (SELECT COUNT(*) FROM event_likes WHERE event_id = e.id AND user_id = $user_id) as is_liked,
                (SELECT COUNT(*) FROM event_saves WHERE event_id = e.id AND user_id = $user_id) as is_saved,
-               (SELECT COUNT(*) FROM event_likes WHERE event_id = e.id) as total_likes
+               (SELECT COUNT(*) FROM event_likes WHERE event_id = e.id) as total_likes,
+               (SELECT COUNT(*) FROM event_comments WHERE event_id = e.id) as comment_count
                FROM events e 
                JOIN users u ON e.organizer_id = u.id 
                WHERE e.status = 'upcoming' 
@@ -355,8 +357,8 @@ $user_path = getUserPath($user_role);
                             $seats_left = $event['max_participants'] - $event['registered_count'];
                             $is_full = $seats_left <= 0;
                             
-                            // Check if already registered
-                            $check_reg = "SELECT * FROM registrations WHERE event_id={$event['id']} AND user_id=$user_id";
+                            // Check if already registered (exclude cancelled)
+                            $check_reg = "SELECT * FROM registrations WHERE event_id={$event['id']} AND user_id=$user_id AND status='registered'";
                             $is_registered = mysqli_num_rows(mysqli_query($conn, $check_reg)) > 0;
                         ?>
                             <div class="event-card">
@@ -419,6 +421,13 @@ $user_path = getUserPath($user_role);
                                             <span>❤️</span>
                                             <span id="like-count-<?php echo $event['id']; ?>"><?php echo $event['total_likes']; ?></span>
                                         </button>
+                                        
+                                        <button class="social-btn" 
+                                                onclick="window.location.href='<?php echo $user_path; ?>/view_event.php?id=<?php echo $event['id']; ?>#commentsSection'">
+                                            <span>💬</span>
+                                            <span><?php echo $event['comment_count'] ?? 0; ?></span>
+                                        </button>
+                                        
                                      <?php if($user_role == 'student'): ?>   
                                         <button class="social-btn <?php echo $event['is_saved'] ? 'saved' : ''; ?>" 
                                                 onclick="toggleSave(<?php echo $event['id']; ?>, this)">
@@ -454,7 +463,8 @@ $user_path = getUserPath($user_role);
                         <?php while($event = mysqli_fetch_assoc($this_week_result)): 
                             $seats_left = $event['max_participants'] - $event['registered_count'];
                             $is_full = $seats_left <= 0;
-                            $check_reg = "SELECT * FROM registrations WHERE event_id={$event['id']} AND user_id=$user_id";
+                            // Check if already registered (exclude cancelled)
+                            $check_reg = "SELECT * FROM registrations WHERE event_id={$event['id']} AND user_id=$user_id AND status='registered'";
                             $is_registered = mysqli_num_rows(mysqli_query($conn, $check_reg)) > 0;
                         ?>
                             <div class="event-card">
@@ -506,6 +516,13 @@ $user_path = getUserPath($user_role);
                                             <span>❤️</span>
                                             <span id="like-count-week-<?php echo $event['id']; ?>"><?php echo $event['total_likes']; ?></span>
                                         </button>
+                                        
+                                        <button class="social-btn" 
+                                                onclick="window.location.href='<?php echo $user_path; ?>/view_event.php?id=<?php echo $event['id']; ?>#commentsSection'">
+                                            <span>💬</span>
+                                            <span><?php echo $event['comment_count'] ?? 0; ?></span>
+                                        </button>
+                                        
                                     <?php if($user_role == 'student'): ?>  
                                         <button class="social-btn <?php echo $event['is_saved'] ? 'saved' : ''; ?>" 
                                                 onclick="toggleSave(<?php echo $event['id']; ?>, this)">

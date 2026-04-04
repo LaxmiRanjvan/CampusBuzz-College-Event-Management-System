@@ -494,7 +494,7 @@ $categories_result = mysqli_query($conn, $categories_sql);
                         $is_full = $seats_left <= 0;
                         
                         // Check if already registered
-                        $check_reg = "SELECT * FROM registrations WHERE event_id={$event['id']} AND user_id=$user_id";
+                        $check_reg = "SELECT * FROM registrations WHERE event_id={$event['id']} AND user_id=$user_id AND status='registered'";
                         $is_registered = mysqli_num_rows(mysqli_query($conn, $check_reg)) > 0;
                     ?>
                         <div class="event-card" 

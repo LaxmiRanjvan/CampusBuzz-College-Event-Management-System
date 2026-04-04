@@ -384,5 +384,6 @@ $is_full = $stats['total_registrations'] >= $event['max_participants'];
             </div>
         </main>
     </div>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

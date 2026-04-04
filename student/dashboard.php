@@ -22,7 +22,7 @@ $upcoming_registered = mysqli_fetch_assoc(mysqli_query($conn, $upcoming_register
 
 $attended_query = "SELECT COUNT(*) as count FROM registrations r 
                    JOIN events e ON r.event_id = e.id 
-                   WHERE r.user_id = $student_id AND e.status='completed'";
+                   WHERE r.user_id = $student_id AND e.status='completed' AND r.status='registered'";
 $attended = mysqli_fetch_assoc(mysqli_query($conn, $attended_query))['count'];
 
 $available_events_query = "SELECT COUNT(*) as count FROM events 
@@ -148,5 +148,6 @@ $my_events_result = mysqli_query($conn, $my_events_query);
             </div>
         </main>
     </div>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>
