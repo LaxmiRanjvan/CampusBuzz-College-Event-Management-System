@@ -1,0 +1,195 @@
+# Campus Event Manager - Project Structure
+
+## Root Level Files
+
+| File | Purpose |
+|------|---------|
+| **index.php** | Landing page / Home page - Handles user signup and redirects logged-in users to home |
+| **login.php** | User login page with rate limiting (5 attempts per 10 min) - Handles authentication |
+| **logout.php** | Logs out user and destroys session |
+| **composer.json** | PHP dependency manager - Contains PHPMailer library for email functionality |
+| **composer.lock** | Locks composer dependencies to specific versions |
+| **users.sql** | Database schema/initial setup SQL file |
+| **README.md** | Project documentation |
+| **test.txt** | Test file (temporary) |
+
+---
+
+## 📁 `/config/` - Configuration Files
+Centralized configuration for database and email setup
+
+| File | Purpose |
+|------|---------|
+| **database.php** | MySQL database connection (localhost, root, campus_events database) |
+| **email_config.php** | SMTP and email configuration for PHPMailer |
+| **co_organizer_helper.php** | Helper functions for co-organizer management |
+
+---
+
+## 📁 `/admin/` - Administrator Dashboard
+Admin users manage users, events, and merchandise
+
+| File | Purpose |
+|------|---------|
+| **dashboard.php** | Admin main dashboard/overview page |
+| **manage_users.php** | Create, edit, delete user accounts |
+| **create_user.php** | Form to create new user accounts |
+| **edit_user.php** | Edit existing user details |
+| **view_user.php** | View individual user profile/details |
+| **browse_events.php** | List all events in the system |
+| **view_event.php** | View event details |
+| **event_details.php** | Detailed event information page |
+| **browse_merchandise.php** | List all merchandise items |
+| **view_merchandise.php** | View merchandise details |
+| **reports.php** | Generate business reports |
+| **export_report.php** | Export reports to file (CSV/PDF) |
+| **download_events.php** | Download events data |
+| **download_registrations.php** | Download student event registrations |
+| **download_users.php** | Download user list |
+| **send_email.php** | Send bulk emails to users |
+
+---
+
+## 📁 `/organizer/` - Event Organizer Dashboard
+Organizers create and manage events, merchandise, and co-organizers
+
+| File | Purpose |
+|------|---------|
+| **dashboard.php** | Organizer main dashboard |
+| **create_event.php** | Create new event with details |
+| **manage_events.php** | View and manage organizer's events |
+| **edit_event.php** | Edit event information |
+| **view_event.php** | View event details |
+| **browse_events.php** | Browse other events in system |
+| **view_registrations.php** | View student registrations for their events |
+| **create_merchandise.php** | Create merchandise items for events |
+| **manage_merchandise.php** | Manage created merchandise |
+| **edit_merchandise.php** | Edit merchandise details |
+| **browse_merchandise.php** | Browse all merchandise |
+| **view_merchandise.php** | View merchandise details |
+| **manage_co_organizers.php** | Add/remove co-organizers for events |
+| **co_organizer_invitations.php** | Send and manage co-organizer invitations |
+| **send_notification.php** | Send notifications to registered students |
+| **send_merch_notification.php** | Send merchandise-related notifications |
+| **send_tickets.php** | Generate and send event tickets to students |
+| **verify_ticket.php** | Verify student tickets at event entry |
+| **verification_report.php** | Report of verified attendance |
+
+---
+
+## 📁 `/student/` - Student Dashboard
+Students browse, register for events and purchase merchandise
+
+| File | Purpose |
+|------|---------|
+| **dashboard.php** | Student main dashboard/home |
+| **browse_events.php** | Browse all available events |
+| **view_event.php** | View detailed event information |
+| **event_detail.php** | Extended event detail page |
+| **register_event.php** | Register/enroll in an event |
+| **my_events.php** | View registered events |
+| **ajax_toggle_like.php** | AJAX endpoint - Like/unlike events |
+| **browse_merchandise.php** | Browse merchandise for purchase |
+| **view_merchandise.php** | View merchandise details and pricing |
+
+---
+
+## 📁 `/common/` - Shared Pages (All Users)
+Pages accessible to all authenticated users
+
+| File | Purpose |
+|------|---------|
+| **home.php** | Main landing page after login |
+| **profile.php** | User profile and account settings |
+| **event_comments.php** | Event comments/discussion page |
+| **help.php** | Help and FAQ page |
+
+---
+
+## 📁 `/includes/` - HTML Templates & Reusable Components
+Shared layout components included across pages
+
+| File | Purpose |
+|------|---------|
+| **header.php** | Top navigation bar and page header |
+| **sidebar.php** | Left sidebar with navigation menu (role-specific) |
+| **footer.php** | Page footer with links and info |
+
+---
+
+## 📁 `/assets/` - Static Resources
+Frontend styling and JavaScript
+
+| File | Purpose |
+|------|---------|
+| **`/css/style.css`** | Main stylesheet for all pages |
+| **`/js/script.js`** | Client-side JavaScript functions |
+| **`/images/`** | Storage for logo, icons, UI images |
+
+---
+
+## 📁 `/uploads/` - User-Generated Content
+Stores media files uploaded by users
+
+| File | Purpose |
+|------|---------|
+| **`/merchandise/`** | Merchandise product images |
+| **`/profiles/`** | User profile pictures |
+| **Event Images** | Event banner/poster images (named with event_[timestamp]_[hash].jpg) |
+
+---
+
+## 📁 `/vendor/` - External Dependencies
+Auto-generated by Composer - Third-party libraries
+
+| Library | Purpose |
+|---------|---------|
+| **phpmailer/** | Email sending library (PHPMailer v7.0) |
+| **composer/** | Composer autoloader and dependency management |
+| **autoload.php** | PSR-4 autoloader for all vendor classes |
+
+---
+
+## User Roles & Permissions
+
+### 🔐 Admin
+- Manage all users (create, edit, delete)
+- View all events and registrations
+- Generate reports and export data
+- Send system-wide emails
+
+### 🎯 Organizer
+- Create and manage events
+- Create and sell merchandise
+- Invite co-organizers
+- Send notifications and tickets
+- Verify student attendance
+- View event registrations
+
+### 👤 Student
+- Browse and register for events
+- Like/favorite events
+- Purchase merchandise
+- View registered events
+- View profile and event comments
+
+### 🤝 Co-Organizer
+- (Invited by main organizer)
+- Help manage events
+- Assist with ticket verification
+
+---
+
+## Key Features Summary
+
+✅ **User Management** - Multi-role authentication system  
+✅ **Event Management** - Create, edit, browse events  
+✅ **Merchandise Store** - Create products, manage inventory  
+✅ **Registration System** - Students register for events  
+✅ **Ticketing** - Generate and verify tickets  
+✅ **Notifications** - Email notifications to students  
+✅ **Reports** - Admin can export data  
+✅ **Co-Organizer System** - Invite team members  
+✅ **Comments/Discussion** - Event-specific discussions  
+✅ **Security** - Rate limiting, password hashing, role-based access  
+
