@@ -1,5 +1,5 @@
 admis dashboard table not responsive
-password chnge for users 
+password chnge for users (forgot password )
 card if cliecked shoud open view not only when clicked view button 
 crass icon on serach bar 
 
@@ -14,7 +14,7 @@ hamburger layout issue :tickit verification
 event attened student dashboard count is not updating but updating else where maybe query issue
 
 extra feather ::
-1..event attended (stu)merge with tickit verification added manual way of addeding someone atted  if ticit is not scanning or lost add update attence page (org)[attendence page]
+O_1..event attended (stu)merge with tickit verification added manual way of addeding someone atted  if ticit is not scanning or lost add update attence page (org)[attendence page]
 2..logo add it (high)
 3..mobile responciveness 
 4..sidebar update to thin bar (remove cross if hamburger is on)

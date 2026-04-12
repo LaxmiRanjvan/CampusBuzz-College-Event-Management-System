@@ -2,7 +2,6 @@
 session_start();
 require_once '../config/database.php';
 
-// Check if user is logged in and is student
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'student') {
     header("Location: ../login.php");
     exit();
@@ -10,23 +9,22 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'student') {
 
 $student_id = $_SESSION['user_id'];
 
-// Get statistics
+// Total registrations (upcoming, not yet verified)
 $registered_events_query = "SELECT COUNT(*) as count FROM registrations WHERE user_id = $student_id AND status='registered'";
 $registered_events = mysqli_fetch_assoc(mysqli_query($conn, $registered_events_query))['count'];
 
+// Upcoming registered (future date)
 $upcoming_registered_query = "SELECT COUNT(*) as count FROM registrations r 
                                JOIN events e ON r.event_id = e.id 
                                WHERE r.user_id = $student_id AND r.status='registered' 
-                               AND e.status='upcoming' AND e.event_date > NOW()";
+                               AND e.event_date > NOW()";
 $upcoming_registered = mysqli_fetch_assoc(mysqli_query($conn, $upcoming_registered_query))['count'];
 
-$attended_query = "SELECT COUNT(*) as count FROM registrations r 
-                   JOIN events e ON r.event_id = e.id 
-                   WHERE r.user_id = $student_id AND e.status='completed' AND r.status='registered'";
+// Officially attended — only ticket-verified
+$attended_query = "SELECT COUNT(*) as count FROM ticket_verifications WHERE user_id = $student_id";
 $attended = mysqli_fetch_assoc(mysqli_query($conn, $attended_query))['count'];
 
-$available_events_query = "SELECT COUNT(*) as count FROM events 
-                           WHERE status='upcoming' AND event_date > NOW()";
+$available_events_query = "SELECT COUNT(*) as count FROM events WHERE status='upcoming' AND event_date > NOW()";
 $available_events = mysqli_fetch_assoc(mysqli_query($conn, $available_events_query))['count'];
 
 // My upcoming registered events
@@ -36,7 +34,7 @@ $my_events_query = "SELECT e.*, u.full_name as organizer_name,
                     JOIN events e ON r.event_id = e.id
                     JOIN users u ON e.organizer_id = u.id
                     WHERE r.user_id = $student_id AND r.status='registered' 
-                    AND e.status='upcoming' AND e.event_date > NOW()
+                    AND e.event_date > NOW()
                     ORDER BY e.event_date ASC LIMIT 5";
 $my_events_result = mysqli_query($conn, $my_events_query);
 ?>
@@ -105,8 +103,9 @@ $my_events_result = mysqli_query($conn, $my_events_query);
             <div style="margin-top: 30px; margin-bottom: 30px;">
                 <h2 style="margin-bottom: 15px; color: #2d3748;">⚡ Quick Actions</h2>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <a href="../common/home.php" class="btn btn-primary">🔍 Browse All Events</a>
+                    <a href="browse_events.php" class="btn btn-primary">🔍 Browse All Events</a>
                     <a href="my_events.php" class="btn btn-secondary">🎫 My Registered Events</a>
+                    <a href="my_events.php?tab=attended" class="btn btn-success">✅ My Attendance</a>
                 </div>
             </div>
             
@@ -139,7 +138,7 @@ $my_events_result = mysqli_query($conn, $my_events_query);
                         <?php else: ?>
                             <tr>
                                 <td colspan="5" style="text-align: center; color: #a0aec0;">
-                                    No upcoming events. <a href="../common/home.php">Browse and register for events!</a>
+                                    No upcoming events. <a href="browse_events.php">Browse and register for events!</a>
                                 </td>
                             </tr>
                         <?php endif; ?>
