@@ -77,6 +77,10 @@
             <a href="../organizer/attendance.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'attendance.php' ? 'active' : ''; ?>">
                 <span>📈</span> Attendance Tracking
             </a>
+            <a href="../organizer/generate_certificates.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'generate_certificates.php' ? 'active' : ''; ?>">
+                <span>🎓</span> Generate Certificates
+            </a>
+
             <!-- <a href="../organizer/co_organizer_invitations.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'co_organizer_invitations.php' ? 'active' : ''; ?>">
                 <span>🤝</span> My Invitations
             </a>

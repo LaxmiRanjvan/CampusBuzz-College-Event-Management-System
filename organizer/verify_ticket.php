@@ -645,5 +645,6 @@ if($manual_event_id) {
                 });
         }
     </script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>
