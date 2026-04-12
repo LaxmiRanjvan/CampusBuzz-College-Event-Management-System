@@ -1,0 +1,20 @@
+admis dashboard table not responsive
+password chnge for users 
+card if cliecked shoud open view not only when clicked view button 
+crass icon on serach bar 
+
+organizer same as admin table view responcive issue on view registration 
+org/view registration : sort by  option when all events selcted
+org/send notification (event and merch) selecet evnt should not be gone after selection let it be there or add back button on next page(low)
+org/merch: payment 
+org/merch mangegment: responcive table problem
+org/merch: view orders ????
+org.send tickit ?????(mostly file name issue works else where)
+hamburger layout issue :tickit verification 
+event attened student dashboard count is not updating but updating else where maybe query issue
+
+extra feather ::
+1..event attended (stu)merge with tickit verification added manual way of addeding someone atted  if ticit is not scanning or lost add update attence page (org)[attendence page]
+2..logo add it (high)
+3..mobile responciveness 
+4..sidebar update to thin bar (remove cross if hamburger is on)
