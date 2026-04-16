@@ -137,7 +137,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_merchandise'])) 
              distribution_date=?, distribution_venue=?, distribution_time=?, status=?
              WHERE id=? AND organizer_id=?"
         );
-        mysqli_stmt_bind_param($upd, "ssdsssisssssssii",
+        mysqli_stmt_bind_param($upd, "ssdsssissssssssii",
             $name, $description, $price, $category, $sizes_available,
             $size_guide, $quantity_available, $contact_info, $upi_id, $new_qr_name, $return_policy,
             $dist_date_val, $distribution_venue, $dist_time_val, $auto_status,

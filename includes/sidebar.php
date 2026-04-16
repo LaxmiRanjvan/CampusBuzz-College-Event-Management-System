@@ -14,7 +14,10 @@
     <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
     
     <div class="sidebar-header">
-        <h2>🎓 Campus Events</h2>
+        <h2 style="text-align: center; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.5px; margin: 0; line-height: 1;">
+            <br><span style="color: #ffffff;">CAMPUS</span><span style="color: #667eea ;">BUZZ</span><br>
+        </h2>
+        <br>
         <p>Welcome, <strong><?php echo htmlspecialchars($_SESSION['full_name']); ?></strong></p>
         <span class="role-badge role-<?php echo $_SESSION['role']; ?>">
             <?php echo ucfirst($_SESSION['role']); ?>
@@ -39,6 +42,9 @@
             </a>
             <a href="../student/browse_merchandise.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'merchandise_store.php' ? 'active' : ''; ?>">
                 <span>🛒</span> Merchandise Store
+            </a>
+            <a href="../student/my_merch.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'my_merch.php' ? 'active' : ''; ?>">
+                <span>🛍️</span> My Merchandise
             </a>
             
         <?php endif; ?>
@@ -80,6 +86,9 @@
             <a href="../organizer/generate_certificates.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'generate_certificates.php' ? 'active' : ''; ?>">
                 <span>🎓</span> Generate Certificates
             </a>
+            <a href="../organizer/my_merch.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'my_merch.php' ? 'active' : ''; ?>">
+                <span>🛍️</span> My Merchandise
+            </a>
 
             <!-- <a href="../organizer/co_organizer_invitations.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'co_organizer_invitations.php' ? 'active' : ''; ?>">
                 <span>🤝</span> My Invitations
@@ -99,6 +108,10 @@
             <a href="../admin/reports.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'reports.php' ? 'active' : ''; ?>">
                 <span>📄</span> Reports
             </a>
+            <a href="../admin/my_merch.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'my_merch.php' ? 'active' : ''; ?>">
+                <span>🛍️</span> My Merchandise
+            </a>
+
         <?php endif; ?>
         
         <a href="../common/profile.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : ''; ?>">

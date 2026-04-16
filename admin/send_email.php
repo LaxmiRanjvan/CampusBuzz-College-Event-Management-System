@@ -333,7 +333,7 @@ $all_users_result = mysqli_query($conn, $all_users_query);
             </div>
             
             <!-- Email Configuration Notice -->
-            <div style="background: #e6f7ff; border-left: 4px solid #1890ff; padding: 20px; border-radius: 8px; margin-top: 20px;">
+            <!-- <div style="background: #e6f7ff; border-left: 4px solid #1890ff; padding: 20px; border-radius: 8px; margin-top: 20px;">
                 <h4 style="margin-top: 0; color: #0050b3; display: flex; align-items: center; gap: 10px;">
                     <span>ℹ️</span> Email Configuration
                 </h4>
@@ -341,7 +341,7 @@ $all_users_result = mysqli_query($conn, $all_users_query);
                     Currently using: <strong><?php echo strtoupper(EMAIL_METHOD); ?></strong> email method.<br>
                     To change email provider, edit <code>config/email_config.php</code>
                 </p>
-            </div>
+            </div> -->
         </main>
     </div>
     

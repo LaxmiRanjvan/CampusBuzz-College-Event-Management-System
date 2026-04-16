@@ -303,7 +303,7 @@ $is_organizer = ($user_role == 'organizer' && $event['organizer_id'] == $user_id
                     
                     <!-- Action Buttons for Organizer/Admin -->
                     <?php if($is_organizer): ?>
-                        <a href="../organizer/manage_registrations.php?event_id=<?php echo $event_id; ?>" 
+                        <a href="../organizer/view_registrations.php?event_id=<?php echo $event_id; ?>" 
                            class="btn btn-primary" 
                            style="width: 100%; text-align: center; margin-bottom: 10px;">
                             📋 Manage Registrations

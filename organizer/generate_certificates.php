@@ -290,9 +290,9 @@ function setupMailer($mail) {
     $mail->SMTPAuth   = true;
     $mail->Username   = SMTP_USERNAME;
     $mail->Password   = SMTP_PASSWORD;
-    $mail->SMTPSecure = SMTP_SECURE;
+    $mail->SMTPSecure = SMTP_ENCRYPTION;
     $mail->Port       = SMTP_PORT;
-    $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
+    $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
 }
 
 // ─── Previously issued certificates for this event ──────────────────────────
