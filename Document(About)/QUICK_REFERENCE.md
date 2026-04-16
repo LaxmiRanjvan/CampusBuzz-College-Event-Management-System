@@ -27,6 +27,7 @@ This project now has **4 comprehensive documentation files**:
 - `events` - Event information
 - `registrations` - Student event registrations
 - `merchandise` - Product catalog
+- `merchandise_orders` - Track student merchandise orders
 - `event_likes` - Like/unlike functionality
 
 **Key Files**:
@@ -34,6 +35,7 @@ This project now has **4 comprehensive documentation files**:
 - `student/browse_events.php` - Event discovery
 - `student/register_event.php` - Event registration
 - `student/my_events.php` - View registered events
+- `student/my_merch.php` - Track merchandise orders and status
 - `student/ajax_toggle_like.php` - Like events (AJAX endpoint)
 
 **Important Variables**:
@@ -62,15 +64,17 @@ $_SESSION['role']      // Should be 'student'
 - `events` - Event management
 - `registrations` - Attendee tracking
 - `merchandise` - Product inventory
-- `event_organizers` - Co-organizer assignments
+- `merchandise_orders` - Track and manage merchandise orders
 - `tickets` - Ticket issuance and verification
+- `certificates` - Certificate generation and tracking
 - `notifications` - Notification history
 
 **Major Features** (19 files):
 - Event Management: create, edit, manage, view events
 - Ticketing: issue tickets, verify tickets, generate reports
-- Co-Organizers: invite, manage, assign
+- Certificates: generate and issue certificates to attendees
 - Merchandise: create, edit, manage products
+- Order Tracking: manage merchandise orders and status
 - Communications: send notifications, send emails
 
 **Key Files by Function**:
@@ -81,19 +85,20 @@ Event Management:
   ├── edit_event.php
   └── view_event.php
 
-Ticketing:
+Ticketing & Attendance:
   ├── send_tickets.php
   ├── verify_ticket.php
-  └── verification_report.php
+  ├── verification_report.php
+  └── attendance.php
 
-Co-Organizers:
-  ├── manage_co_organizers.php
-  └── co_organizer_invitations.php
+Certificates:
+  └── generate_certificates.php
 
-Merchandise:
+Merchandise & Order Tracking:
   ├── create_merchandise.php
   ├── manage_merchandise.php
-  └── edit_merchandise.php
+  ├── edit_merchandise.php
+  └── view_orders.php
 
 Communications:
   └── send_notification.php
@@ -103,6 +108,7 @@ Communications:
 - Admin can see all organizer-created events
 - Students see published events created by organizers
 - Organizer notifications go to registered students
+- Organizer certificates are issued to event attendees
 
 ---
 
@@ -160,15 +166,15 @@ Data Export:
 | `events` | Campus events | Event data, organizer info |
 | `registrations` | Attendances | Who registered for which event |
 | `merchandise` | Products | Item catalog, pricing |
-| `event_organizers` | Co-organizer assignments | Event collaboration |
 | `tickets` | Event tickets | Ticketing & verification |
+| `certificates` | Event certificates | Certificate generation & tracking |
 | `notifications` | Messages sent | Communication history |
 
 ### Most Queried Tables (by module)
 ```
-STUDENT:        events, registrations, merchandise
-ORGANIZER:      events, registrations, event_organizers, tickets
-ADMIN:          users, events, registrations, reports view
+STUDENT:        events, registrations, merchandise, certificates
+ORGANIZER:      events, registrations, tickets, certificates
+ADMIN:          users, events, registrations, certificates, reports view
 ```
 
 ---
@@ -202,6 +208,9 @@ ADMIN:          users, events, registrations, reports view
 **...issues tickets?**
 - `organizer/send_tickets.php` - Ticket generation
 - `organizer/verify_ticket.php` - Ticket verification
+
+**...generates certificates?**
+- `organizer/generate_certificates.php` - Certificate generation
 
 **...handles file uploads?**
 - Various files with: `$_FILES['field']` handling

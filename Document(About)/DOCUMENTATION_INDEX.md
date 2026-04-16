@@ -114,9 +114,9 @@ This folder now contains **comprehensive documentation** for the Campus Event Ma
 
 ---
 
-### Scenario 2: "I need to make changes to the Student module"
-1. Check: **QUICK_REFERENCE.md** "I'm making changes to the STUDENT module" section
-2. Review: **FOLDER_STRUCTURE.md** to understand Student file organization
+### Scenario 2: "I need to make changes to the Organizer module"
+1. Check: **QUICK_REFERENCE.md** "I'm making changes to the ORGANIZER module" section
+2. Review: **FOLDER_STRUCTURE.md** to understand Organizer file organization
 3. Verify: **MODULE_DEPENDENCIES.md** to see cross-module impacts
 4. Code: Make your changes
 5. Validate: Check the security checklist in **QUICK_REFERENCE.md**
@@ -207,7 +207,7 @@ This folder now contains **comprehensive documentation** for the Campus Event Ma
 ### The Project at a Glance
 - **Type**: Campus Event Management System
 - **Users**: Students, Organizers, Admins
-- **Core Feature**: Event management with ticketing, merchandise, and co-organizers
+- **Core Feature**: Event management with ticketing, merchandise
 - **Tech Stack**: PHP 8, MySQL, jQuery
 - **Files**: ~60 PHP files (excluding vendor)
 - **Modules**: Student (9 files) + Organizer (19 files) + Admin (16 files)

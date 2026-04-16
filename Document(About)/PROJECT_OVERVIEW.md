@@ -21,6 +21,7 @@ The **Campus Event Management System** is a comprehensive web-based application 
   - View detailed event information
   - Like/unlike events (AJAX functionality)
   - Purchase merchandise
+  - Track merchandise orders and order status
   - View personal dashboard
   - Access profile management
 
@@ -33,6 +34,7 @@ The **Campus Event Management System** is a comprehensive web-based application 
 - `ajax_toggle_like.php` - Like/unlike functionality (AJAX)
 - `browse_merchandise.php` - Merchandise browsing
 - `view_merchandise.php` - Merchandise details
+- `my_merch.php` - Track merchandise orders and status
 - `view_event.php` - Event view page
 
 ---
@@ -42,13 +44,13 @@ The **Campus Event Management System** is a comprehensive web-based application 
 - **Primary Functions**:
   - Create and manage events
   - Create and manage merchandise
-  - Manage co-organizers for events
+  - Track and manage merchandise orders
   - Send notifications to registered attendees
   - Send merchandise notifications
   - Issue and manage event tickets
   - Verify tickets at event entrance
   - Generate verification reports
-  - Handle co-organizer invitations
+  - Generate certificates for event attendees
   - View event registrations and attendee details
 
 **Key Files**:
@@ -63,14 +65,15 @@ The **Campus Event Management System** is a comprehensive web-based application 
 - `send_tickets.php` - Issue tickets to attendees
 - `verify_ticket.php` - Verify tickets during event
 - `verification_report.php` - Generate verification reports
+- `generate_certificates.php` - Generate and issue certificates to attendees
 - `create_merchandise.php` - Create merchandise items
 - `manage_merchandise.php` - Manage merchandise inventory
 - `edit_merchandise.php` - Edit merchandise details
 - `send_merch_notification.php` - Send merchandise notifications
-- `manage_co_organizers.php` - Manage co-organizers for events
-- `co_organizer_invitations.php` - Handle co-organizer invitations
 - `browse_merchandise.php` - View created merchandise
 - `view_merchandise.php` - View merchandise details
+- `view_orders.php` - Track and manage merchandise orders
+- `attendance.php` - Manage event attendance and verification
 
 ---
 
@@ -128,11 +131,10 @@ Centralized configuration and helper functions for database and email operations
 ```
 config/
 ├── database.php                 # Database connection configuration
-├── email_config.php             # Email configuration (SMTP, sender info)
-└── co_organizer_helper.php      # Co-organizer utility functions
+└── email_config.php             # Email configuration (SMTP, sender info)
 ```
 
-**Responsibility**: Database connectivity, mail service setup, helper functions
+**Responsibility**: Database connectivity, mail service setup
 
 ---
 
@@ -165,19 +167,19 @@ Student-facing features for discovering and registering for events.
 
 ---
 
-#### 🎯 `/organizer/` - Organizer Module (19 files)
+#### 🎯 `/organizer/` - Organizer Module (18 files)
 Event and merchandise creation and management with attendee engagement tools.
 
 **Main Functionalities**:
 - Complete event lifecycle management (create, edit, view, manage)
 - Ticket issuance and verification system
 - Merchandise inventory management
-- Co-organizer collaboration and invitations
 - Bulk notifications to attendees
 - Event analytics and verification reports
+- Certificate generation for event attendees
 - Attendee registration tracking
 
-**Database Tables Used**: `users`, `events`, `merchandise`, `event_organizers` (co-organizers), `registrations`, `tickets`, `notifications`
+**Database Tables Used**: `users`, `events`, `merchandise`, `registrations`, `tickets`, `certificates`, `notifications`
 
 ---
 
@@ -290,7 +292,6 @@ Based on the functionality, the following tables likely exist:
 | `events` | Event information (title, description, date, location, organizer) |
 | `registrations` | Student event registrations (tracks who registered for which event) |
 | `merchandise` | Marketplace items for purchase |
-| `event_organizers` | Co-organizer assignments for events |
 | `tickets` | Event tickets (issued by organizers, verified at events) |
 | `notifications` | Event announcements and notifications |
 | `event_likes` / `event_comments` | Student engagement with events |
@@ -371,7 +372,6 @@ Based on the functionality, the following tables likely exist:
 - ✅ Event creation and editing
 - ✅ Event registration and attendance
 - ✅ Ticket issuance and verification
-- ✅ Co-organizer collaboration
 - ✅ Event notifications
 - ✅ Attendee analytics
 
@@ -409,7 +409,6 @@ Based on the functionality, the following tables likely exist:
 ### **Cross-Module Dependencies**
 - 🔗 **Student** ↔ **Events** (registrations, likes, comments)
 - 🔗 **Organizer** ↔ **Events** (creation, management, tickets)
-- 🔗 **Organizer** ↔ **Co-Organizers** (invitations, collaboration)
 - 🔗 **Admin** ↔ **All Modules** (oversight, user management, reporting)
 - 🔗 **All Modules** ↔ **Merchandise** (browsing, purchasing)
 
@@ -446,10 +445,6 @@ Based on the functionality, the following tables likely exist:
 - Reports: `admin/reports.php`
 - Export: `admin/export_report.php`
 - Downloads: `admin/download_*.php`
-
-**Co-Organizers**:
-- Manage: `organizer/manage_co_organizers.php`
-- Invitations: `organizer/co_organizer_invitations.php`
 
 ---
 

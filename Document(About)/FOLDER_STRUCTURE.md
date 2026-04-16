@@ -26,7 +26,6 @@ campus-event-manager/
 ├── 🔐 CONFIG/ - Configuration & System Setup
 │   ├── database.php                   # MySQL connection (DB credentials)
 │   ├── email_config.php               # Email service configuration (SMTP)
-│   └── co_organizer_helper.php        # Co-organizer utility functions
 │
 │
 ├── 🎨 INCLUDES/ - Shared UI Components
@@ -66,7 +65,7 @@ campus-event-manager/
 │       └── send_email.php             # Send system-wide emails
 │
 │
-├── 🎯 ORGANIZER/ - Event Organizer Module [19 files]
+├── 🎯 ORGANIZER/ - Event Organizer Module [18 files]
 │   │
 │   ├── 📊 Dashboard
 │   ├── dashboard.php                  # Organizer home dashboard
@@ -82,22 +81,23 @@ campus-event-manager/
 │   ├── send_tickets.php               # Issue tickets to attendees
 │   ├── verify_ticket.php              # Verify tickets at event entrance
 │   ├── verification_report.php        # Generate ticket verification reports
+│   ├── attendance.php                 # Manage event attendance & verification
+│   │
+│   ├── 📜 CERTIFICATE GENERATION
+│   ├── generate_certificates.php      # Generate & issue certificates to attendees
 │   │
 │   ├── 📢 EVENT COMMUNICATIONS
 │   ├── send_notification.php          # Send notifications to attendees
 │   ├── view_registrations.php         # View registered attendees
 │   │
-│   ├── 🛍️ MERCHANDISE MANAGEMENT
+│   ├── 🛍️ MERCHANDISE MANAGEMENT & ORDER TRACKING
 │   ├── create_merchandise.php         # Create merchandise product
 │   ├── manage_merchandise.php         # Merchandise management interface
 │   ├── edit_merchandise.php           # Edit merchandise details
 │   ├── send_merch_notification.php    # Send merchandise notifications
 │   ├── browse_merchandise.php         # View created merchandise
 │   ├── view_merchandise.php           # Merchandise detailed view
-│   │
-│   └── 👥 CO-ORGANIZER MANAGEMENT
-│       ├── manage_co_organizers.php   # Manage co-organizers for events
-│       └── co_organizer_invitations.php # Handle co-organizer invitations
+│   └── view_orders.php                # Track & manage merchandise orders
 │
 │
 ├── 👨‍🎓 STUDENT/ - Student Module [9 files]
@@ -115,9 +115,10 @@ campus-event-manager/
 │   ├── 💬 ENGAGEMENT
 │   └── ajax_toggle_like.php           # Like/unlike events (AJAX endpoint)
 │
-│   ├── 🛍️ MARKETPLACE
+│   ├── 🛍️ MARKETPLACE & ORDER TRACKING
 │   ├── browse_merchandise.php         # Merchandise discovery & browsing
-│   └── view_merchandise.php           # Merchandise detailed view
+│   ├── view_merchandise.php           # Merchandise detailed view
+│   └── my_merch.php                   # Track merchandise orders & status
 │
 │
 ├── 🎨 ASSETS/ - Frontend Resources
@@ -171,11 +172,11 @@ campus-event-manager/
 | Module | Files | Purpose |
 |--------|-------|---------|
 | **Admin** | 16 | System oversight, user management, reporting |
-| **Organizer** | 19 | Event creation, co-organizer management, ticketing |
+| **Organizer** | 18 | Event creation, ticketing, certificate generation |
 | **Student** | 9 | Event discovery, registration, engagement |
 | **Core** | 5 | Authentication & entry points (index, login, logout, config, includes) |
 
-**Total Application Files**: ~60 PHP files (excluding vendor)
+**Total Application Files**: ~59 PHP files (excluding vendor)
 
 ---
 
@@ -220,10 +221,6 @@ organizer/dashboard.php → Main Hub
     │
     ├─→ Communications
     │   └─→ organizer/send_notification.php → Bulk Emails
-    │
-    ├─→ Co-Organizers
-    │   ├─→ organizer/manage_co_organizers.php → Assign
-    │   └─→ organizer/co_organizer_invitations.php → Invites
     │
     └─→ Merchandise
         ├─→ organizer/create_merchandise.php → New Products
@@ -274,16 +271,6 @@ Used By:
   - admin/send_email.php
 Dependency: PHPMailer (in vendor/)
 ```
-
-### **co_organizer_helper.php** - Utility Functions
-```
-Location: config/co_organizer_helper.php
-Purpose: Co-organizer business logic
-Used By: organizer/manage_co_organizers.php
-Functionality: Invite, assign, and manage co-organizers
-```
-
----
 
 ## 🎨 Shared UI Components Reference
 
@@ -431,7 +418,7 @@ https://campus-event-manager.local/
 | Component | Depends On | Related To |
 |-----------|-----------|-----------|
 | **Student Module** | Database, Config | Events, Registrations, Merchandise |
-| **Organizer Module** | Database, Config, Email | Events, Co-Organizers, Tickets, Merchandise |
+| **Organizer Module** | Database, Config, Email | Events, Tickets, Merchandise |
 | **Admin Module** | Database, Config | All Users, All Events, All Data |
 | **Includes** | Varies | All modules |
 | **Assets** | Varies | All modules |

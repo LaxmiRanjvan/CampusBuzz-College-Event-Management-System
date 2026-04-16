@@ -28,11 +28,12 @@ Reads From Database:
 ├── events               (Browse events)
 ├── registrations        (Check if registered, view my events)
 ├── merchandise          (Browse merchandise)
+├── merchandise_orders   (Track student orders and status)
 ├── event_likes          (Check if liked)
 └── event_comments       (View comments)
 
 Permissions Required:
-└── READ: events, registrations, merchandise
+├── READ: events, registrations, merchandise, merchandise_orders
 └── WRITE: registrations, event_likes, event_comments
 ```
 
@@ -43,7 +44,6 @@ Permissions Required:
 Depends On:
 ├── config/database.php              (Database connection)
 ├── config/email_config.php          (Email service)
-├── config/co_organizer_helper.php   (Co-organizer logic)
 ├── includes/header.php              (UI component)
 ├── includes/sidebar.php             (Navigation)
 ├── includes/footer.php              (UI component)
@@ -53,19 +53,20 @@ Depends On:
 └── uploads/                         (Store event/merch images)
 
 Reads From Database:
-├── users                    (Current organizer, co-organizer info)
+├── users                    (Current organizer info)
 ├── events                   (Organizer's events)
 ├── registrations            (Attendee list)
-├── event_organizers         (Co-organizer assignments)
 ├── merchandise              (Organizer's merchandise)
+├── merchandise_orders       (Track orders and manage status)
 ├── tickets                  (Issued tickets, verification)
+├── certificates             (Generated certificates)
 ├── notifications            (Sent notifications history)
 └── event_likes/comments     (Engagement data)
 
 Permissions Required:
 ├── READ: All relevant data
-├── WRITE: events, registrations, merchandise, tickets, notifications
-└── UPDATE: events, merchandise, event_organizers
+├── WRITE: events, registrations, merchandise, merchandise_orders, tickets, certificates, notifications
+└── UPDATE: events, merchandise, merchandise_orders
 ```
 
 ---
@@ -119,7 +120,7 @@ CREATE TABLE users (
 Indexed On: id (PK), username (UNIQUE), email (UNIQUE)
 Used By: 
   - STUDENT: View profile, display in pages
-  - ORGANIZER: Display current user, co-organizer info
+  - ORGANIZER: Display current user info
   - ADMIN: Full user management
 ```
 
@@ -192,25 +193,6 @@ Used By:
 
 ---
 
-### **Table: event_organizers** (Co-Organizer Management)
-```sql
-CREATE TABLE event_organizers (
-    id INT(11) PRIMARY KEY AUTO_INCREMENT,
-    event_id INT(11) FOREIGN KEY → events.id,
-    organizer_id INT(11) FOREIGN KEY → users.id,
-    role VARCHAR(100),
-    status ENUM('invited', 'accepted', 'declined'),
-    created_at TIMESTAMP,
-    UNIQUE KEY (event_id, organizer_id)
-);
-
-Used By:
-  - ORGANIZER: manage_co_organizers.php, co_organizer_invitations.php
-  - ADMIN: Full oversight
-```
-
----
-
 ### **Table: tickets** (Ticketing System)
 ```sql
 CREATE TABLE tickets (
@@ -227,6 +209,27 @@ CREATE TABLE tickets (
 Used By:
   - ORGANIZER: send_tickets.php, verify_ticket.php, verification_report.php
   - ADMIN: Reports, auditing
+```
+
+---
+
+### **Table: certificates** (Event Certificates)
+```sql
+CREATE TABLE certificates (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    certificate_code VARCHAR(100) UNIQUE,
+    event_id INT(11) FOREIGN KEY → events.id,
+    student_id INT(11) FOREIGN KEY → users.id,
+    issued_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    certificate_url VARCHAR(255),
+    status ENUM('generated', 'sent', 'downloaded'),
+    created_at TIMESTAMP
+);
+
+Used By:
+  - ORGANIZER: generate_certificates.php
+  - STUDENT: Can view/download received certificates
+  - ADMIN: Reports, certification auditing
 ```
 
 ---
@@ -392,22 +395,6 @@ Used by files:
   - admin/send_email.php
 ```
 
-### **config/co_organizer_helper.php**
-```php
-Helper functions for co-organizer operations:
-
-Functions:
-  - invite_co_organizer()
-  - accept_invitation()
-  - remove_co_organizer()
-  - get_co_organizers()
-  
-Used in:
-  - organizer/manage_co_organizers.php
-  - organizer/co_organizer_invitations.php
-```
-
----
 
 ## 📋 Module Feature Dependencies Table
 
@@ -417,7 +404,6 @@ Used in:
 | Browse Events | Student | database, includes | events, users |
 | Register Event | Student | database, includes | registrations, events |
 | Create Event | Organizer | database, config/email | events, users |
-| Manage Co-Org | Organizer | database, helper fn | event_organizers, users |
 | Issue Tickets | Organizer | database, PHPMailer | tickets, registrations |
 | Verify Tickets | Organizer | database, includes | tickets, events |
 | Manage Users | Admin | database, includes | users |
@@ -449,7 +435,7 @@ WRITE:
 ```
 READ:
   ✓ users (all)
-  ✓ events (own + co-organized)
+  ✓ events (owns)
   ✓ registrations (for own events)
   ✓ merchandise (own + co-managed)
   ✓ event_organizers (for own events)

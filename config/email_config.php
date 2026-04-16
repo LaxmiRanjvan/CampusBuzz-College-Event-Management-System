@@ -30,6 +30,9 @@ define('SMTP_USERNAME', 'laxmiranjvan01@gmail.com');
 define('SMTP_PASSWORD', 'txsz izsj ignz hesj'); // Use App Password for Gmail
 define('SMTP_ENCRYPTION', 'tls'); // 'tls' or 'ssl'
 
+// Aliases for compatibility
+define('SMTP_USER', SMTP_USERNAME);
+define('SMTP_PASS', SMTP_PASSWORD);
 
 // ==========================================
 // OPTION 3: SendGrid API (Recommended for production)
@@ -45,6 +48,10 @@ define('SENDGRID_API_KEY', 'your-sendgrid-api-key');
 define('FROM_EMAIL', 'laxmiranjvan01@gmail.com'); // Changed to match your Gmail
 define('FROM_NAME', 'Campus Event Manager');
 define('REPLY_TO_EMAIL', 'laxmiranjvan01@gmail.com'); // Changed to match your Gmail
+
+// Aliases for compatibility
+define('SMTP_FROM', FROM_EMAIL);
+define('SMTP_FROM_NAME', FROM_NAME);
 
 /**
  * Send Email Function
