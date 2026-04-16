@@ -1,14 +1,16 @@
 <?php
 // footer.php - Place in includes/ folder
 ?>
-<footer style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 40px 30px; margin-top: 60px;">
+<footer style="background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); color: white; padding: 60px 40px 30px; margin-top: 60px;">
     <div style="max-width: 1200px; margin: 0 auto;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
             <!-- About Section -->
             <div>
-                <h3 style="margin-bottom: 20px; font-size: 24px; display: flex; align-items: center; gap: 10px;">
-                    <span>🎓</span> Campus Events
-                </h3>
+                <h2 style="text-align: center; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.5px; margin: 0; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    <br><span style="color: #ffffff;">CAMPUS</span><span style="color: #667eea ;">BUZZ</span><br>
+                </h2>
+                
+                <br>
                 <p style="line-height: 1.8; opacity: 0.9; font-size: 14px;">
                     Your one-stop platform for discovering and managing campus events, networking with peers, and staying connected with campus life.
                 </p>

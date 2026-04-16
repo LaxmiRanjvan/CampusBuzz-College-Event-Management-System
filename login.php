@@ -113,7 +113,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 <body class="auth-page">
     <div class="auth-container">
         <div class="auth-card">
-            <h1>🎓 Campus Event Manager</h1>
+            <h2 style="text-align: center; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.5px; margin: 0; line-height: 1;">
+                <br><span style="color: #ffffff;">CAMPUS</span><span style="color: #667eea ;">BUZZ</span><br>
+            </h2>
             <h2>Welcome Back!</h2>
 
             <?php if($error): ?>
