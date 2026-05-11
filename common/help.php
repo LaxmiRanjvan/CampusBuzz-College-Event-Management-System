@@ -157,11 +157,7 @@ $user_role = $_SESSION['role'];
                 <!-- Hero Section -->
                 <div class="help-hero">
                     <h1>🆘 How can we help you?</h1>
-                    <p>Search our knowledge base or browse categories below</p>
                     
-                    <div class="help-search">
-                        <input type="text" id="searchInput" placeholder="Search for help articles..." onkeyup="searchFAQ()">
-                    </div>
                 </div>
                 
                 <!-- Quick Categories -->
